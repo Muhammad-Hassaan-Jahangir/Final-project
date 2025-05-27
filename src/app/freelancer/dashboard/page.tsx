@@ -9,6 +9,10 @@ export default function Freelancer() {
     router.push('/freelancer/view-jobs');
   };
 
+  const handleAcceptedJobs = () => {
+    router.push('/freelancer/accepted-jobs');
+  };
+
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -17,9 +21,16 @@ export default function Freelancer() {
 
         <button
           onClick={handleViewJobs}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded w-full"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded w-full mb-3"
         >
-          View Jobs
+          View Available Jobs
+        </button>
+
+        <button
+          onClick={handleAcceptedJobs}
+          className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded w-full"
+        >
+          Accepted Jobs
         </button>
       </div>
     </div>
