@@ -23,11 +23,16 @@ export async function GET(
     const decoded = jwt.verify(token, jwtSecret) as { _id: string };
 
     const jobObjectId = new mongoose.Types.ObjectId(params.id);
+    console.log("Decoded client:", decoded);
+console.log("Job ID used for filter:", jobObjectId);
+
+
 
     const bids = await Bid.find({ jobId: jobObjectId }).populate({
       path: "freelancerId",
       select: "name email",
     });
+    console.log("Fetched bids:", bids);
 
     const job = await PostJob.findById(jobObjectId).select("title"); // ✅ Fetch title
 
