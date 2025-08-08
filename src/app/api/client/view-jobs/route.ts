@@ -20,7 +20,11 @@ export async function GET(req: NextRequest) {
     const decoded = jwt.verify(token, jwtSecret) as { _id: string };
     console.log("Decoded token:", decoded);
 
-    const jobs = await PostJob.find({ userId: decoded._id });
+    // Only fetch jobs that are not in progress (pending, completed, or cancelled)
+    const jobs = await PostJob.find({ 
+      userId: decoded._id,
+      status: { $ne: 'in_progress' } // Exclude jobs with status 'in_progress'
+    });
     console.log("Fetched jobs:", jobs);
 
     return NextResponse.json({ jobs }, { status: 200 });

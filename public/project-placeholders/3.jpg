@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#9370DB"/>
+  <g fill="#FFFFFF" fill-opacity="0.2">
+    <polygon points="400,100 700,400 400,500 100,400"/>
+    <polygon points="400,150 650,400 400,475 150,400"/>
+  </g>
+  <text x="400" y="300" font-family="Arial" font-size="48" fill="white" text-anchor="middle" dominant-baseline="middle">UI/UX Design</text>
+</svg>

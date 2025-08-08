@@ -12,180 +12,171 @@ function LoginPage() {
     role: "",
   });
 
-  const [loading, setLoading] = useState(false); // loading state
-
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const loginFormSubmitted = async (event: any) => {
     event.preventDefault();
-    if (login.email === "" || login.password === "") {
-      toast.error("Email and password are required", {
+    
+    // Form validation
+    if (login.email === "") {
+      toast.error("Email is required", {
+        position: "top-right",
+      });
+      return;
+    }
+    
+    if (login.password === "") {
+      toast.error("Password is required", {
+        position: "top-right",
+      });
+      return;
+    }
+    
+    if (login.role === "") {
+      toast.error("Please select a role", {
         position: "top-right",
       });
       return;
     }
 
     try {
-      setLoading(true); // start loading
-      const verified = await CheckLogin(login);
+      setLoading(true);
+      const response = await CheckLogin(login);
 
-      if (verified) {
-        toast.success("Login successful", {
-          position: "top-right",
-        });
-
+      if (response && response.status) {
+        toast.success("Login successful", { position: "top-right" });
         if (login.role === "freelancer") {
           router.push("/freelancer/dashboard");
         } else if (login.role === "client") {
           router.push("/client/dashboard");
+        } else if (login.role === "admin") {
+          router.push("/admin/dashboard");
         }
       } else {
-        toast.error("Invalid credentials", {
-          position: "top-right",
-        });
+        // This will handle the case when the API returns a status: false
+        toast.error(response?.message || "Invalid credentials", { position: "top-right" });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in login", error);
-      toast.error("Login failed", {
-        position: "top-right",
-      });
+      
+      // Handle axios error responses
+      if (error.response) {
+        const errorMessage = error.response.data?.message || "Login failed";
+        
+        // Show specific error messages based on API response
+        if (errorMessage.includes("User not found")) {
+          toast.error("User not found with this email and role", { position: "top-right" });
+        } else if (errorMessage.includes("Password not matched")) {
+          toast.error("Incorrect password", { position: "top-right" });
+        } else {
+          toast.error(errorMessage, { position: "top-right" });
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        toast.error("No response from server. Please try again later", { position: "top-right" });
+      } else {
+        // Something happened in setting up the request
+        toast.error("Login failed. Please try again", { position: "top-right" });
+      }
     } finally {
-      setLoading(false); // stop loading
+      setLoading(false);
     }
   };
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 px-4 py-20 overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
-          src="https://illustrations.popsy.co/white/freelancer.svg"
-          alt="Freelancer background"
-          className="absolute bottom-20 right-0 w-[500px] opacity-100 pointer-events-none select-none"
-        />
-        <div className="absolute inset-0 bg-black opacity-10"></div>
-      </div>
+    <div className="min-h-screen bg-white">
+      {/* Main Content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 min-h-[calc(100vh-64px)]">
+        {/* Left Side - Login Form */}
+        <div className="flex flex-col justify-center px-10 md:px-20">
+          <h2 className="text-2xl font-semibold text-black mb-6">
+            Login to Your Account
+          </h2>
+          <form onSubmit={loginFormSubmitted} className="space-y-4">
+            {/* Email */}
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                value={login.email}
+                onChange={(e) =>
+                  setLogin({ ...login, email: e.target.value })
+                }
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
 
-      <div className="z-10 relative bg-white shadow-2xl rounded-3xl p-10 md:p-12 w-full max-w-lg">
-        <h1 className="text-3xl font-extrabold text-center text-purple-700 mb-8">Login</h1>
-        <form onSubmit={loginFormSubmitted} className="space-y-6">
-          {/* Email */}
-          <div>
-            <label htmlFor="user_email" className="block text-sm font-semibold text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="user_email"
-              value={login.email}
-              onChange={(event) =>
-                setLogin({ ...login, email: event.target.value })
-              }
-              className="mt-2 w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black placeholder-gray-400"
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+            {/* Password */}
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Password</label>
+              <input
+                type="password"
+                value={login.password}
+                onChange={(e) =>
+                  setLogin({ ...login, password: e.target.value })
+                }
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
 
-          {/* Password */}
-          <div>
-            <label htmlFor="user_password" className="block text-sm font-semibold text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="user_password"
-              value={login.password}
-              onChange={(event) =>
-                setLogin({ ...login, password: event.target.value })
-              }
-              className="mt-2 w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black placeholder-gray-400"
-              placeholder="Enter password"
-              required
-            />
-          </div>
+            {/* Role */}
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Role</label>
+              <select
+                value={login.role}
+                onChange={(e) => setLogin({ ...login, role: e.target.value })}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              >
+                <option value="">Select Role</option>
+                <option value="freelancer">Freelancer</option>
+                <option value="client">Client</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
 
-          {/* Role */}
-          <div>
-            <label htmlFor="user_role" className="block text-sm font-semibold text-gray-700">
-              Role
-            </label>
-            <select
-              id="user_role"
-              value={login.role}
-              onChange={(event) =>
-                setLogin({ ...login, role: event.target.value })
-              }
-              className="mt-2 w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
-              required
-            >
-              <option value="">Select Role</option>
-              <option value="freelancer">Freelancer</option>
-              <option value="client">Client</option>
-            </select>
-          </div>
+            {/* Remember Me */}
+            <div className="flex items-center">
+              <input type="checkbox" className="mr-2" />
+              <label className="text-sm text-gray-600">Remember Me</label>
+            </div>
 
-          {/* Buttons */}
-          <div className="flex items-center justify-between space-x-3">
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl transition duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-indigo-500 text-white font-medium py-2 rounded-md hover:bg-indigo-600 transition"
             >
-              {loading ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    ></path>
-                  </svg>
-                  Logging in...
-                </>
-              ) : (
-                "Login"
-              )}
+              {loading ? "Logging in..." : "Login"}
             </button>
-            <button
-              type="button"
-              onClick={() =>
-                setLogin({
-                  email: "",
-                  password: "",
-                  role: "",
-                })
-              }
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-300"
-            >
-              Reset
-            </button>
-          </div>
 
-          {/* Forgot Password Link */}
-          <div className="text-center mt-4">
-            <Link
-              href="/forgotPassword"
-              className="text-blue-600 hover:underline hover:text-blue-800 font-medium"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-        </form>
+            {/* Forgot Password */}
+            <div className="text-sm text-center mt-2">
+              <Link
+                href="/forgotPassword"
+                className="text-indigo-600 hover:underline"
+              >
+                Forgot your password? Recover here
+              </Link>
+            </div>
+          </form>
+        </div>
+
+        {/* Right Side - Image */}
+        <div className="hidden md:flex items-center justify-center bg-white">
+          <img
+            src="/crypto-login-image.png" // make sure this is in /public folder
+            alt="Crypto coins"
+            className="max-w-[600px] object-contain"
+          />
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
 

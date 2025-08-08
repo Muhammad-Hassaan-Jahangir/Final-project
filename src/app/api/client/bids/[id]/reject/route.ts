@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/helper/db";
 import { Bid } from "@/models/bidModel";
+import { Notification } from "@/models/notificationModel";
 import jwt from "jsonwebtoken";
 
 export async function PUT(
@@ -19,15 +20,33 @@ export async function PUT(
   try {
     const decoded = jwt.verify(token, jwtSecret) as { _id: string };
 
-    const bid = await Bid.findByIdAndUpdate(
+    // Get the bid with populated data before updating
+    const bid = await Bid.findById(params.id)
+      .populate('jobId', 'title budget')
+      .populate('freelancerId', 'name email');
+
+    if (!bid) {
+      return NextResponse.json({ error: "Bid not found" }, { status: 404 });
+    }
+
+    // Update bid status to rejected
+    await Bid.findByIdAndUpdate(
       params.id,
       { status: "rejected" },
       { new: true }
     );
 
-    if (!bid) {
-      return NextResponse.json({ error: "Bid not found" }, { status: 404 });
-    }
+    // Create notification for freelancer
+    const notification = new Notification({
+      userId: bid.freelancerId._id,
+      type: 'bid_rejected',
+      title: 'Bid Rejected',
+      message: `Your bid of $${bid.amount} for "${bid.jobId.title}" has been rejected.`,
+      relatedId: bid.jobId._id,
+      relatedModel: 'PostJob'
+    });
+    
+    await notification.save();
 
     return NextResponse.json({ message: "Bid rejected", bid });
   } catch (err) {

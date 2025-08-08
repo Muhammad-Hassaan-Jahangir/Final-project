@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/helper/db";
 import { Bid } from "@/models/bidModel";
+import { PostJob } from "@/models/postjobModel";
+import { Notification } from "@/models/notificationModel";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 export async function POST(req: NextRequest) {
@@ -25,6 +27,23 @@ export async function POST(req: NextRequest) {
 });
 
     await newBid.save();
+
+    // Get the job details to find the client
+    const job = await PostJob.findById(body.jobId).populate('userId', 'name');
+    
+    if (job) {
+      // Create notification for the client
+      const notification = new Notification({
+        userId: job.userId._id,
+        type: 'bid_received',
+        title: 'New Bid Received',
+        message: `You received a new bid of $${body.amount} for your project "${job.title}"`,
+        relatedId: newBid._id,
+        relatedModel: 'Bid'
+      });
+      
+      await notification.save();
+    }
 
     return NextResponse.json({ message: "Bid submitted successfully", bid: newBid });
   } catch (error) {

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose';
 
 const userSchema = new Schema({
   name: {
@@ -8,7 +8,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: [true, "Email Required"],
-    unique: true,  // <-- add this to enforce unique emails
+    unique: true,
   },
   password: {
     type: String,
@@ -16,12 +16,63 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['freelancer', 'client', 'admin'], // add more roles if needed
-    required: true,
+    enum: ["client", "freelancer", "admin"],
+    required: [true, "Role Required"],
   },
-  resetPasswordToken: { type: String },
-  resetPasswordExpire: { type: Date },
-
+  walletAddress: {
+    type: String,
+    default: "",
+  },
+  bio: {
+    type: String,
+    default: "",
+  },
+  phone: {
+    type: String,
+    default: "",
+  },
+  country: {
+    type: String,
+    default: "",
+  },
+  city: {
+    type: String,
+    default: "",
+  },
+  skills: {
+    type: [String],
+    default: [],
+  },
+  hourlyRate: {
+    type: Number,
+    default: 0,
+  },
+  profileImage: {
+    type: String,
+    default: "/default-avatar.png",
+  },
+  badges: {
+    type: [String],
+    default: [],
+  },
+  favoriteJobs: {
+    type: [Schema.Types.ObjectId],
+    ref: "PostJob",
+    default: [],
+  },
+  transactionHistory: {
+    type: [
+      {
+        amount: Number,
+        type: String,
+        date: Date,
+        description: String,
+      },
+    ],
+    default: [],
+  },
+}, {
+  timestamps: true,
 });
 
 export const User = mongoose.models.User || mongoose.model("User", userSchema);

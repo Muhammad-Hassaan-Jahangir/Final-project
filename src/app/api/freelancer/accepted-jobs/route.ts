@@ -17,7 +17,12 @@ export async function GET(req: NextRequest) {
   try {
     const decoded = jwt.verify(token, jwtSecret) as { _id: string };
 
-    const jobs = await PostJob.find({ assignedTo: decoded._id }).sort({ createdAt: -1 });
+    const jobs = await PostJob.find({ 
+      assignedTo: decoded._id, 
+      status: 'in_progress' 
+    })
+    .populate('userId', 'name email profileImage')
+    .sort({ createdAt: -1 });
 
     return NextResponse.json({ jobs }, { status: 200 });
   } catch (err) {

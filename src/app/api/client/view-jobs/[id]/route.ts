@@ -56,12 +56,15 @@ export async function PUT(
     const decoded = jwt.verify(token, jwtSecret) as { _id: string };
     const body = await req.json();
 
+    // Ensure budget is a valid number
+    const budget = parseFloat(body.budget) || 0;
+    
     const updated = await PostJob.findOneAndUpdate(
       { _id: params.id, userId: decoded._id },
       {
         title: body.title,
         description: body.description,
-        budget: body.budget,
+        budget: budget, // Ensure budget is properly set as a number
         deadline: new Date(body.deadline),
       },
       { new: true }

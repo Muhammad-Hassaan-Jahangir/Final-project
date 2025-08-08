@@ -30,7 +30,7 @@ console.log("Job ID used for filter:", jobObjectId);
 
     const bids = await Bid.find({ jobId: jobObjectId }).populate({
       path: "freelancerId",
-      select: "name email",
+      select: "name email profileImage bio phone skills hourlyRate location experience portfolio walletAddress",
     });
     console.log("Fetched bids:", bids);
 

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { setuser } from "../../services/userservice";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 function SignUpPage() {
   const [sign, setSign] = useState({
@@ -11,11 +12,11 @@ function SignUpPage() {
     role: "",
   });
 
-  const [loading, setLoading] = useState(false); // loading state
+  const [loading, setLoading] = useState(false);
 
   const SubmitUser = async (event: any) => {
     event.preventDefault();
-    setLoading(true); // start loading
+    setLoading(true);
     try {
       await setuser(sign);
       toast.success("User added successfully", {
@@ -28,147 +29,118 @@ function SignUpPage() {
         password: "",
         role: "",
       });
-    } catch (error) {
-      toast.error(`Error in adding user`, {
+    } catch (error: any) {
+      // Display the specific error message from the API if available
+      const errorMessage = error.response?.data?.message || "Error in adding user";
+      toast.error(errorMessage, {
         position: "top-right",
       });
       console.error("Error in adding user", error);
     } finally {
-      setLoading(false); // stop loading
+      setLoading(false);
     }
   };
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 px-4 py-20 overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
-          src="https://illustrations.popsy.co/white/freelancer.svg"
-          alt="Freelancer background"
-          className="absolute bottom-20 right-0 w-[500px] opacity-100 pointer-events-none select-none"
-        />
-        <div className="absolute inset-0 bg-black opacity-10"></div>
-      </div>
+    <div className="flex min-h-screen">
+      {/* Left Background */}
+      <div className="hidden lg:flex w-1/5 bg-cover bg-center" style={{ backgroundImage: "url('/signup-left.png')" }}></div>
 
-      <div className="z-10 relative bg-white shadow-2xl rounded-3xl p-10 md:p-12 w-full max-w-lg">
-        <h1 className="text-3xl font-extrabold text-center text-purple-700 mb-8">Sign Up</h1>
-        <form onSubmit={SubmitUser} className="space-y-6">
-          {/* Name */}
-          <div>
-            <label htmlFor="user_name" className="block text-sm font-semibold text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              id="user_name"
-              value={sign.name}
-              onChange={(event) => setSign({ ...sign, name: event.target.value })}
-              className="mt-2 w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black placeholder-gray-400"
-              placeholder="Your name"
-              required
-            />
-          </div>
+      {/* Center Form */}
+      <div className="flex-1 flex items-center justify-center bg-white px-6 py-10">
+        <div className="w-full max-w-md space-y-6">
+          <h2 className="text-3xl font-bold text-center text-black">Create Account</h2>
+          <p className="text-center text-gray-600 text-sm">
+            Join us and start connecting with clients or freelancers today!
+          </p>
 
-          {/* Email */}
-          <div>
-            <label htmlFor="user_email" className="block text-sm font-semibold text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="user_email"
-              value={sign.email}
-              onChange={(event) => setSign({ ...sign, email: event.target.value })}
-              className="mt-2 w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black placeholder-gray-400"
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+          <form onSubmit={SubmitUser} className="space-y-4">
+             {/* name */}
+            <div>
+              <input
+                type="test"
+                placeholder="Enter your name"
+                value={sign.name}
+                onChange={(e) => setSign({ ...sign, name: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
+            {/* Email */}
+            <div>
+              <input
+                type="email"
+                placeholder="Your email address"
+                value={sign.email}
+                onChange={(e) => setSign({ ...sign, email: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
 
-          {/* Password */}
-          <div>
-            <label htmlFor="user_password" className="block text-sm font-semibold text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="user_password"
-              value={sign.password}
-              onChange={(event) => setSign({ ...sign, password: event.target.value })}
-              className="mt-2 w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black placeholder-gray-400"
-              placeholder="Enter password"
-              required
-            />
-          </div>
+            {/* Password */}
+            <div>
+              <input
+                type="password"
+                placeholder="Create a secure password"
+                value={sign.password}
+                onChange={(e) => setSign({ ...sign, password: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
 
-          {/* Role */}
-          <div>
-            <label htmlFor="user_role" className="block text-sm font-semibold text-gray-700">
-              Role
-            </label>
-            <select
-              id="user_role"
-              value={sign.role}
-              onChange={(event) => setSign({ ...sign, role: event.target.value })}
-              className="mt-2 w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
-              required
-            >
-              <option value="">Select Role</option>
-              <option value="freelancer">Freelancer</option>
-              <option value="client">Client</option>
-            </select>
-          </div>
+            {/* Role */}
+            <div>
+              <select
+                value={sign.role}
+                onChange={(e) => setSign({ ...sign, role: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-700"
+                required
+              >
+                <option value="">Select Role</option>
+                <option value="freelancer">Freelancer</option>
+                <option value="client">Client</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
 
-          {/* Buttons */}
-          <div className="flex items-center justify-between space-x-4">
+            {/* Terms & Conditions */}
+            <div className="flex items-center text-sm text-gray-700">
+              <input type="checkbox" className="mr-2" required />
+              <span>
+                I agree with{" "}
+                <a href="#" className="text-indigo-600 hover:underline">
+                  Terms & Conditions
+                </a>
+              </span>
+            </div>
+
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 flex justify-center items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl transition duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-md transition"
             >
-              {loading ? (
-                <>
-                  <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    ></path>
-                  </svg>
-                  Signing Up...
-                </>
-              ) : (
-                "Sign Up"
-              )}
+              {loading ? "Signing Up..." : "Sign Up"}
             </button>
+          </form>
 
-            <button
-              type="reset"
-              onClick={() =>
-                setSign({
-                  name: "",
-                  email: "",
-                  password: "",
-                  role: "",
-                })
-              }
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-300"
-            >
-              Reset
-            </button>
-          </div>
-        </form>
+         
+
+          {/* Already Registered */}
+          <p className="text-center text-sm text-gray-600 mt-2">
+            Already registered?{" "}
+            <Link href="/login" className="text-indigo-600 hover:underline">
+              Log In
+            </Link>
+          </p>
+        </div>
       </div>
-    </main>
+
+      {/* Right Background */}
+      <div className="hidden lg:flex w-1/5 bg-cover bg-center" style={{ backgroundImage: "url('/signup-right.png')" }}></div>
+    </div>
   );
 }
 

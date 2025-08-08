@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#FF6B6B"/>
+  <g fill="#FFFFFF" fill-opacity="0.2">
+    <rect x="100" y="100" width="200" height="200"/>
+    <rect x="500" y="100" width="200" height="200"/>
+    <rect x="300" y="300" width="200" height="200"/>
+  </g>
+  <text x="400" y="300" font-family="Arial" font-size="48" fill="white" text-anchor="middle" dominant-baseline="middle">Mobile App</text>
+</svg>

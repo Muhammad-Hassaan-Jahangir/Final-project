@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#50C878"/>
+  <g fill="#FFFFFF" fill-opacity="0.2">
+    <rect x="100" y="100" width="600" height="400" rx="20" ry="20"/>
+    <rect x="200" y="200" width="400" height="200" rx="20" ry="20"/>
+  </g>
+  <text x="400" y="300" font-family="Arial" font-size="48" fill="white" text-anchor="middle" dominant-baseline="middle">Data Science</text>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#4A90E2"/>
+  <g fill="#FFFFFF" fill-opacity="0.2">
+    <circle cx="400" cy="300" r="100"/>
+    <circle cx="400" cy="300" r="200"/>
+    <circle cx="400" cy="300" r="300"/>
+  </g>
+  <text x="400" y="300" font-family="Arial" font-size="48" fill="white" text-anchor="middle" dominant-baseline="middle">Web Development</text>
+</svg>

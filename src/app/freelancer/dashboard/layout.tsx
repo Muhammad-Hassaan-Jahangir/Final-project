@@ -1,10 +1,13 @@
-import LogoutButton from "../../../components/LogoutButton"; // Make sure this path is correct
+import FreelancerSidebar from "../../../components/FreelancerSidebar";
+import LogoutButton from "../../../components/LogoutButton";
 
-export default function LayoutWithLogout({ children }: { children: React.ReactNode }) {
+export default function FreelancerLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div>
-            <LogoutButton /> {/* No error should appear here */}
-            <div>{children}</div>
+        <div className="flex min-h-screen bg-gray-100">
+            <FreelancerSidebar />
+            <div className="flex-1 md:ml-48 p-4 md:p-8 transition-all duration-300 ease-in-out">
+                {children}
+            </div>
         </div>
     );
 }

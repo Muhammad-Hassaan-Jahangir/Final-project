@@ -12,7 +12,7 @@ export default function LogoutButton() {
             const response = await Logout();
             if (response.status) {
                 toast.success("Logged out successfully", { position: "top-right" });
-                router.push("/");
+                router.push("/logout"); // Changed from "/" to "/logout"
             } else {
                 toast.error(response.message || "Logout failed", { position: "top-right" });
             }
